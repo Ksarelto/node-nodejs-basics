@@ -34,6 +34,8 @@ export const osOperations = (args) => {
     case cliArguments.architecture:
       console.log(os.arch())
       break;
+    default:
+      throw new Error(INVALID_ARGS)
   }
   console.log(DIRECTORY_MESSAGE(process.cwd()))
  } catch (err) {
