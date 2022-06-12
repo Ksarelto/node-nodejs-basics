@@ -1,31 +1,42 @@
 import fs from 'fs'
-import path from 'path';
+import { DIRECTORY_MESSAGE, INVALID_ARGS, INVALID_INPUT, OPERATION_FAILED } from '../common/constants.js'
 import { commands } from '../common/enum.js'
+import { getErrorMessage, replacer } from '../common/utils.js'
 
 const getUpper = () => {
   const currentDirectory = process.cwd()
-  console.log(currentDirectory)
-  process.chdir(currentDirectory.replace(/(\\)[a-z0-9_-]+$/gi, '\\'))
+  process.chdir(replacer(currentDirectory, '\\'))
+  console.log(DIRECTORY_MESSAGE(process.cwd()))
 }
 
-const changePath = (path) => {
-  console.log(path)
+const setPath = (path) => {
+  process.chdir(path[0])
+  console.log(DIRECTORY_MESSAGE(process.cwd()))
 }
 
-export const getPath = (command, path) => {
-  switch(command){
-    case commands.up:
-      getUpper()
-      break;
-    case commands.cd:
-      changePath(path)
-      break; 
-    case commands.ls:
-      fs.readdir(process.cwd(), (err, files) => {
-        console.log(files)
-      })
-      break;
+const getFilesList = () => {
+  fs.readdir(process.cwd(), (err, files) => {
+    console.log(files)
+    console.log(DIRECTORY_MESSAGE(process.cwd()))
+  })
+}
+
+export const pathOperations = (command, path) => {
+  try {
+    if (path.length > 1) throw new Error(INVALID_ARGS)
+
+    switch(command){
+      case commands.up:
+        getUpper();
+        break;
+      case commands.cd:
+        setPath(path);
+        break; 
+      case commands.ls:
+        getFilesList();
+        break;
+    }
+  } catch(err) {
+    getErrorMessage(err)
   }
-
-  return 'Testing'
 }

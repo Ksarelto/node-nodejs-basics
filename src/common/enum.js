@@ -11,7 +11,8 @@ export const commands = {
   os: 'os',
   hash: 'hash',
   compress: 'compress',
-  decompress: 'decompress'
+  decompress: 'decompress',
+  exit: '.exit'
 }
 
 export const cliArguments = {
