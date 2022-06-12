@@ -3,11 +3,11 @@ import { FILE_EXISTS, INVALID_ARGS } from '../common/constants.js';
 import { getErrorMessage, getPathsFromArgs } from '../common/utils.js';
 import { DIRECTORY_MESSAGE } from '../common/constants.js';
 
-export const copy = (args) => {
+export const move = (args) => {
   if (args.length !== 2) throw new Error(INVALID_ARGS);
 
   const { pathToFile, pathToNewFile} = getPathsFromArgs(args)
-  
+
   if(fs.existsSync(pathToNewFile)) {
     throw new Error(FILE_EXISTS)
   }
@@ -19,13 +19,16 @@ export const copy = (args) => {
     getErrorMessage(err)
   })
 
+  writeStream.on('finish', () => {
+    fs.rm(pathToFile, (err) => {
+      if(err) getErrorMessage(err)
+      console.log(DIRECTORY_MESSAGE(process.cwd()))
+    })
+  })
+
   writeStream.on('error', (err) => {
     getErrorMessage(err)
   })
 
-  writeStream.on('finish', () => {
-    console.log(DIRECTORY_MESSAGE(process.cwd()))
-  })
-
     readStream.pipe(writeStream)
-}
+};
